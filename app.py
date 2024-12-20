@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, after_this_request
+from werkzeug.utils import secure_filename
+import io
 import os
 import json
 import re
@@ -10,39 +12,77 @@ UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Route for the main page
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Route to handle file uploads
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    file = request.files.get('file')
 
-    file = request.files['file']
-
-    if file.filename == '':
+    if not file or file.filename == '':
         return "No selected file", 400
 
     if file and file.filename.endswith('.js'):
-        # Save uploaded file
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename) #Set file Directory
-        file.save(file_path)
+    
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-        # Process file
-        output_csv = process_tweets(file_path)
+        try:
+            # Save uploaded file
+            file.save(file_path)
 
-        # Send the generated CSV as a downloadable file user
-        return send_file(output_csv, as_attachment=True)
+            # Process file and generate CSV 
+            csv_data = process_tweets(file_path)
+
+            # Schedule file cleanup
+            @after_this_request
+            def cleanup(response):
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        print(f"Deleted uploaded file: {file_path}", flush=True)
+                except Exception as e:
+                    print(f"Error during cleanup: {e}", flush=True)
+                return response
+
+            # Send the generated CSV as a downloadable file
+            return send_file(
+                io.BytesIO(csv_data),
+                as_attachment=True,
+                download_name='your_tweets.csv',
+                mimetype='text/csv'
+            )
+
+        except Exception as e:
+            print(f"Error during file processing: {e}", flush=True)
+            return "An error occurred while processing the file.", 500
 
     return "Invalid file type. Please upload a .js file.", 400
 
-# Functions to process tweets and generate CSV
+
+#Process list of dicts to CSV
 def process_tweets(file):
     tweets = parse_tweets(file)
     sorted_tweets = sort_tweets(tweets)
-    return write_tweets_to_csv(sorted_tweets)
 
+    # Write CSV data to a BytesIO object (I have  no idea how Bytes IO works. Credits to GPT for making this part work. I needed it for file deletion)
+    output = io.StringIO()
+    csv_writer = csv.writer(output)
+    csv_writer.writerow(["Date", "Time", "Tweet", "Links"])
+
+    for tweet in sorted_tweets:
+        csv_writer.writerow([
+            tweet['formatted_date'],
+            tweet['date'].strftime("%H:%M:%S") if tweet['date'] else "",
+            tweet['text'],
+            tweet['link']
+        ])
+
+    return output.getvalue().encode('utf-8')
+
+#Parses the tweets from the JSON file into a list of dictionaries
 def parse_tweets(json_file):
     with open(json_file, 'r', encoding='utf-8') as file:
         content = file.read()
@@ -88,28 +128,15 @@ def parse_tweets(json_file):
 
     return parsed_tweets
 
+#Sorts the tweets by date in descending order
 def sort_tweets(tweets):
+    """Sorts tweets by date in descending order."""
     return sorted(
         tweets,
-        key=lambda x: x['date'] or datetime.min,
+        key=lambda x: x['date'],
         reverse=True
     )
 
-def write_tweets_to_csv(tweets):
-    output_path = os.path.join(app.config['UPLOAD_FOLDER'], 'tweets.csv')
-    with open(output_path, 'w', newline='', encoding='utf-8') as file:
-        csv_writer = csv.writer(file)
-        csv_writer.writerow(["Date", "Time", "Tweet", "Links"])
-
-        for tweet in tweets:
-            csv_writer.writerow([
-                tweet['formatted_date'],
-                tweet['date'].strftime("%H:%M:%S") if tweet['date'] else "",
-                tweet['text'],
-                tweet['link']
-            ])
-
-    return output_path
 
 if __name__ == '__main__':
     app.run(debug=True)

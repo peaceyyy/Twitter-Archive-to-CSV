@@ -1,22 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Twitter Archive to CSV</title>
-</head>
-<body>
+    <!-- Corrected CSS link -->
+    <link
+      href="{{ url_for('static', filename='styles.css') }}"
+      rel="stylesheet"
+    />
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="site-header">
+      <h1>Twitter Archive to CSV</h1>
+      <div class="site-logo">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          x="0px"
+          y="0px"
+          width="48"
+          height="48"
+          viewBox="0 0 48 48"
+        >
+          <linearGradient
+            id="_osn9zIN2f6RhTsY8WhY4a_5MQ0gPAYYx7a_gr1"
+            x1="10.341"
+            x2="40.798"
+            y1="8.312"
+            y2="38.769"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0" stop-color="#2aa4f4"></stop>
+            <stop offset="1" stop-color="#007ad9"></stop>
+          </linearGradient>
+          <path
+            fill="url(#_osn9zIN2f6RhTsY8WhY4a_5MQ0gPAYYx7a_gr1)"
+            d="M46.105,11.02c-1.551,0.687-3.219,1.145-4.979,1.362c1.789-1.062,3.166-2.756,3.812-4.758	c-1.674,0.981-3.529,1.702-5.502,2.082C37.86,8.036,35.612,7,33.122,7c-4.783,0-8.661,3.843-8.661,8.582	c0,0.671,0.079,1.324,0.226,1.958c-7.196-0.361-13.579-3.782-17.849-8.974c-0.75,1.269-1.172,2.754-1.172,4.322	c0,2.979,1.525,5.602,3.851,7.147c-1.42-0.043-2.756-0.438-3.926-1.072c0,0.026,0,0.064,0,0.101c0,4.163,2.986,7.63,6.944,8.419	c-0.723,0.198-1.488,0.308-2.276,0.308c-0.559,0-1.104-0.063-1.632-0.158c1.102,3.402,4.299,5.889,8.087,5.963	c-2.964,2.298-6.697,3.674-10.756,3.674c-0.701,0-1.387-0.04-2.065-0.122C7.73,39.577,12.283,41,17.171,41	c15.927,0,24.641-13.079,24.641-24.426c0-0.372-0.012-0.742-0.029-1.108C43.483,14.265,44.948,12.751,46.105,11.02"
+          ></path>
+        </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          width="800px"
+          height="800px"
+          viewBox="0 0 256 256"
+          version="1.1"
+          preserveAspectRatio="xMidYMid"
+        >
+          <g>
+            <path d="M0,0 L256,0 L256,256 L0,256 L0,0 Z" fill="#F7DF1E"></path>
+            <path
+              d="M67.311746,213.932292 L86.902654,202.076241 C90.6821079,208.777346 94.1202286,214.447137 102.367086,214.447137 C110.272203,214.447137 115.256076,211.354819 115.256076,199.326883 L115.256076,117.528787 L139.313575,117.528787 L139.313575,199.666997 C139.313575,224.58433 124.707759,235.925943 103.3984,235.925943 C84.1532952,235.925943 72.9819429,225.958603 67.3113397,213.93026"
+              fill="#000000"
+            ></path>
+            <path
+              d="M152.380952,211.354413 L171.969422,200.0128 C177.125994,208.433981 183.827911,214.619835 195.684368,214.619835 C205.652521,214.619835 212.009041,209.635962 212.009041,202.762159 C212.009041,194.513676 205.479416,191.592025 194.481168,186.78207 L188.468419,184.202565 C171.111213,176.81473 159.597308,167.53534 159.597308,147.944838 C159.597308,129.901308 173.344508,116.153295 194.825752,116.153295 C210.119924,116.153295 221.117765,121.48094 229.021663,135.400432 L210.29059,147.428775 C206.166146,140.040127 201.699556,137.119289 194.826159,137.119289 C187.78047,137.119289 183.312254,141.587098 183.312254,147.428775 C183.312254,154.646349 187.78047,157.568406 198.089956,162.036622 L204.103924,164.614095 C224.553448,173.378641 236.067352,182.313448 236.067352,202.418387 C236.067352,224.071924 219.055137,235.927975 196.200432,235.927975 C173.860978,235.927975 159.425829,225.274311 152.381359,211.354413"
+              fill="#000000"
+            ></path>
+          </g>
+        </svg>
 
-    <h1>Twitter Archive to CSV</h1>
-    <p>Convert your Twitter archive to CSV</p>
-    <h2>Upload your Twitter archive (tweets.js) file here</h2>
-    <p>Go to your Twitter account settings and request your Twitter archive. Once you receive the archive , upload the tweets.js file here.</p>
-    
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <label for="file">Upload your Twitter archive (.js file):</label><br>
-        <input type="file" id="file" name="file" accept=".js" required><br><br>
-        <button type="submit">Convert to CSV</button>
+        <img src="{{ url_for('static', filename='arrow.png') }}" alt="arrow" />
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="1.1"
+          id="Layer_1"
+          viewBox="0 0 512 512"
+          xml:space="preserve"
+        >
+          <path
+            style="fill: #89c429"
+            d="M511.344,274.266C511.77,268.231,512,262.143,512,256C512,114.615,397.385,0,256,0S0,114.615,0,256  c0,117.769,79.53,216.949,187.809,246.801L511.344,274.266z"
+          />
+          <path
+            style="fill: #709e21"
+            d="M511.344,274.266L314.991,77.913L119.096,434.087l68.714,68.714C209.522,508.787,232.385,512,256,512  C391.243,512,501.976,407.125,511.344,274.266z"
+          />
+          <polygon
+            style="fill: #ffffff"
+            points="278.328,333.913 255.711,77.913 119.096,77.913 119.096,311.652 "
+          />
+          <polygon
+            style="fill: #e8e6e6"
+            points="392.904,311.652 392.904,155.826 337.252,133.565 314.991,77.913 255.711,77.913   256.067,333.913 "
+          />
+          <polygon
+            style="fill: #ffffff"
+            points="314.991,155.826 314.991,77.913 392.904,155.826 "
+          />
+          <rect
+            x="119.096"
+            y="311.652"
+            style="fill: #b3da73"
+            width="273.809"
+            height="122.435"
+          />
+          <g>
+            <path
+              style="fill: #ffffff"
+              d="M227.424,354.863l-7.796,9.233c-3.48-4.238-8.626-6.887-13.32-6.887   c-8.4,0-14.757,6.659-14.757,15.363c0,8.854,6.357,15.589,14.757,15.589c4.466,0,9.612-2.422,13.32-6.206l7.871,8.324   c-5.677,5.827-14.076,9.687-21.871,9.687c-15.969,0-27.849-11.73-27.849-27.245c0-15.287,12.184-26.79,28.305-26.79   C213.954,345.933,222.126,349.413,227.424,354.863z"
+            />
+            <path
+              style="fill: #ffffff"
+              d="M276.772,351.684l-5.071,10.519c-5.6-3.255-12.638-5.524-16.952-5.524   c-3.482,0-5.827,1.287-5.827,3.86c0,9.157,28.001,3.936,28.001,23.082c0,10.595-9.384,16.196-21.19,16.196   c-8.854,0-17.936-3.33-24.218-8.476l5.221-10.368c5.449,4.768,13.623,7.947,19.148,7.947c4.237,0,6.886-1.589,6.886-4.617   c0-9.384-28.001-3.783-28.001-22.552c0-9.763,8.4-15.969,21.116-15.969C263.529,345.781,271.323,348.128,276.772,351.684z"
+            />
+            <path
+              style="fill: #ffffff"
+              d="M301.372,399.362l-20.585-52.975h14.379l13.547,38.975l13.547-38.975h13.848l-20.811,52.975H301.372   z"
+            />
+          </g>
+        </svg>
+      </div>
+      <p>
+        Convert your Twitter archive JSON file to a more organized CSV format
+      </p>
+    </div>
+    <div class="instructions-text">
+      <p style="color: #ff9d1e">
+        Go to your Twitter account settings and request your Twitter archive.
+        Once you receive the archive, upload the tweets.js file here.
+      </p>
+    </div>
+
+    <form
+      class="form-group"
+      action="/upload"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <label for="file">Upload your .js file:</label><br />
+      <input
+        type="file"
+        id="file"
+        name="file"
+        accept=".js"
+        required
+      /><br /><br />
+      <button type="submit">Convert to CSV</button>
     </form>
-    
-</body>
+
+    <p>
+      Privacy Note: Your Twitter archive file will not be stored and is deleted
+      immediately after you download your CSV file.
+    </p>
+  </body>
 </html>
