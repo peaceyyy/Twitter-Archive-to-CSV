@@ -67,7 +67,9 @@ def process_tweets(file):
     tweets = parse_tweets(file)
     sorted_tweets = sort_tweets(tweets)
 
-    # Write CSV data to a BytesIO object (I have  no idea how Bytes IO works. Credits to GPT for making this part work. I needed it for file deletion)
+      # Write CSV data to a BytesIO object
+    '''(I have no idea how Bytes IO works. Credits to GPT for making this part work. 
+    I needed it avoid file locking by not writing the CSV file to disk in the first place lol)'''
     output = io.StringIO()
     csv_writer = csv.writer(output)
     csv_writer.writerow(["Date", "Time", "Tweet", "Links"])
