@@ -101,3 +101,13 @@ p {
     margin-top: 1em;
 
 }
+a {
+    color: #1DA1F2; /* Twitter blue */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make the text bold */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover */
+    color: #0d95e8; /* Darker blue on hover */
+}
