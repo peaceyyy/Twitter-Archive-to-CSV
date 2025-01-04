@@ -67,7 +67,11 @@ def process_tweets(file):
     tweets = parse_tweets(file)
     sorted_tweets = sort_tweets(tweets)
 
+<<<<<<< HEAD
     # Write CSV data to a BytesIO object
+=======
+      # Write CSV data to a BytesIO object
+>>>>>>> 6d2158a722c0676d2d9e61ee659c6f031acec35b
     '''(I have no idea how Bytes IO works. Credits to GPT for making this part work. 
     I needed it avoid file locking by not writing the CSV file to disk in the first place lol)'''
     output = io.StringIO()
