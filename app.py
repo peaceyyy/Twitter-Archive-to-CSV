@@ -73,7 +73,7 @@ def process_tweets(file):
       # Write CSV data to a BytesIO object
 >>>>>>> 6d2158a722c0676d2d9e61ee659c6f031acec35b
     '''(I have no idea how Bytes IO works. Credits to GPT for making this part work. 
-    I needed it avoid file locking by not writing the CSV file to disk in the first place lol)'''
+    I needed it to avoid file locking by not writing the CSV file to disk in the first place lol)'''
     output = io.StringIO()
     csv_writer = csv.writer(output)
     csv_writer.writerow(["Date", "Time", "Tweet", "Links"])
